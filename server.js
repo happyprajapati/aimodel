@@ -32,6 +32,8 @@ app.get("/:msg", async (req, res) => {
         const prompt = req.params.msg;
 
         const result = await model.generateContent(prompt);
+        console.log("result===", result)
+        console.log("text===", result.response.text())
         let response = formatGeminiResponse(result.response.text());
         return res.json(response);
     } catch (error) {
