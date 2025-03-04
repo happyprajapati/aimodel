@@ -4,10 +4,10 @@ const cors = require('cors');
 const fetch = require ("node-fetch")
 globalThis.fetch = fetch;
 globalThis.Headers = fetch.Headers;
+
 const { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } = require("@google/generative-ai");
 
-const genAI = new GoogleGenerativeAI("AIzaSyCJuxnUgTGkUbRhcPng626vX3lBueA4Lz8");
-// const genAI = new GoogleGenerativeAI(process.env.API_KEY);
+const genAI = new GoogleGenerativeAI(process.env.API_KEY);
 
 const modelConfig = {
     model: "gemini-2.0-flash",
