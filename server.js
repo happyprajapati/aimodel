@@ -1,12 +1,41 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
-const fetch = require('node-fetch');
 
-const { GoogleGenerativeAI } = require("@google/generative-ai");
+const { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } = require("@google/generative-ai");
 
 const genAI = new GoogleGenerativeAI("AIzaSyCJuxnUgTGkUbRhcPng626vX3lBueA4Lz8");
-const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+// const genAI = new GoogleGenerativeAI(process.env.API_KEY);
+
+const modelConfig = {
+    model: "gemini-2.0-flash",
+    temperature: 0.8,
+    maxTokens: 64,
+    safetySettings: [
+      {
+        // Block all sexually explicit content
+        category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
+        threshold: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE,
+      },
+      {
+        // Block all hate speech
+        category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,
+        threshold: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE,
+      },
+      {
+        // Allow medium+ dangerous content
+        category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
+        threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+      },
+      {
+        // Allow high harrassment
+        category: HarmCategory.HARM_CATEGORY_HARASSMENT,
+        threshold: HarmBlockThreshold.BLOCK_ONLY_HIGH,
+      },
+    ],
+  };
+  
+const model = genAI.getGenerativeModel(modelConfig);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
