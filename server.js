@@ -11,12 +11,20 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
-function formatGeminiResponse(response) {
-    formattedResponse = response.replace(/([.!?])\s*(?=[A-Z])/g, '$1<br />');  // Add line breaks after sentences
+function formatGeminiResponse(text) {
+    text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
 
-    formattedResponse = formattedResponse.replace(/\*/g, '');  // remove all * from response
+    // Italic: *text* -> <em>text</em>
+    text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
 
-    return formattedResponse;
+    // Line breaks: \n\n -> <br> (or you could use <p> tags for paragraphs)
+    text = text.replace(/\n\n/g, '<br><br>');
+    text = text.replace(/\n/g, '<br>');
+    
+    // remove all * from response
+    text = text.replace(/\*/g, ''); 
+
+    return text;
 }
 
 app.get("/:msg", async (req, res) => {
@@ -28,6 +36,7 @@ app.get("/:msg", async (req, res) => {
         return res.json(response);
     } catch (error) {
         console.error("Error generating text:", error);
+        return res.json({status: false});
     }
 });
 
