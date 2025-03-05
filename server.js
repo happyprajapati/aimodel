@@ -43,29 +43,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
-function formatGeminiResponse(text) {
-    text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-
-    // Italic: *text* -> <em>text</em>
-    text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
-
-    // Line breaks: \n\n -> <br> (or you could use <p> tags for paragraphs)
-    text = text.replace(/\n\n/g, '<br><br>');
-    text = text.replace(/\n/g, '<br>');
-    
-    // remove all * from response
-    text = text.replace(/\*/g, ''); 
-
-    return text;
-}
-
 app.get("/:msg", async (req, res) => {
     try {
         const prompt = req.params.msg;
 
         const result = await model.generateContent(prompt);
         let response = formatGeminiResponse(result.response.text());
-        return res.json(response);
+        return res.json(response.replace(/\*/g, '' ));
     } catch (error) {
         console.error("Error generating text:", error);
         return res.json({status: false});
