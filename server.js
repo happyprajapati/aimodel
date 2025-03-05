@@ -47,8 +47,8 @@ app.get("/:msg", async (req, res) => {
     try {
         const prompt = req.params.msg;
 
-        const result = await model.generateContent(prompt);
-        let response = formatGeminiResponse(result.response.text());
+        let result = await model.generateContent(prompt);
+        let response = result.response.text();
         return res.json(response.replace(/\*/g, '' ));
     } catch (error) {
         console.error("Error generating text:", error);
